@@ -1,9 +1,11 @@
 import React from 'react';
 import "./MainPage.scss";
 import { sortPixelsSimple } from '../utils/pixelSorter';
-
+import { useDispatch } from 'react-redux';
+import { setImageData } from '../actions/imageActions';
 
 const MainPage: React.FC = () => {
+
     const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -36,10 +38,11 @@ const MainPage: React.FC = () => {
     };
     const handleGlitch = () => {
         const canvas = document.getElementById('imageCanvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (ctx) {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             sortPixelsSimple(imageData.data, canvas.width);
+            ctx.putImageData(imageData, 0, 0);
         }
     };
     const handleSave = () => {
