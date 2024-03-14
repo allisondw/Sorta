@@ -1,17 +1,26 @@
-import { SET_THRESHOLD, SET_COLOR_CHANNEL, SET_DIRECTION, ColorChannel } from "./imageActions";
+import { Direction } from "./imageActions";
+import { SET_THRESHOLD, SET_COLOR_CHANNEL, SET_DIRECTION, ColorChannel, SET_ORIGINAL_IMAGE_DATA, RESET_ORIGINAL_IMAGE_DATA } from "./imageActions";
 import { ImageAction } from "./imageActions";
 import { Action } from 'redux';
 
-const initialState = {
-    threshold: 50,
+interface ImageState {
+    threshold: number,
+    colorChannel: ColorChannel,
+    direction: Direction,
+    originalImageData: ImageData | null;
+}
+
+const initialState: ImageState = {
+    threshold: 0,
     colorChannel: ColorChannel.None,
     direction: 'horizontal',
+    originalImageData: null,
 };
 
 export const imageReducer = (
-    state = initialState, 
+    state: ImageState = initialState, 
     action: Action | ImageAction 
-) => {
+ ) => {
     switch (action.type) {
         case SET_THRESHOLD:
             if ('payload' in action) {
@@ -28,6 +37,13 @@ export const imageReducer = (
                 return { ...state, direction: action.payload };
             }
             break;
+        case SET_ORIGINAL_IMAGE_DATA:
+            if('payload' in action) {
+                return { ...state, originalImageData: action.payload };
+            };
+            break;
+        case RESET_ORIGINAL_IMAGE_DATA:
+            return { ...state, originalImageData: null };
         default:
             return state;
     }

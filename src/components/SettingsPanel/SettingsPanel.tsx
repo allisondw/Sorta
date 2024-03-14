@@ -13,8 +13,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ handleThresholdChange, ha
                 <fieldset>
                         <legend>Threshold: </legend>
                     <label htmlFor="threshold">Threshold:</label>
-                    <input type="range" id="threshold" min="1" max="100" defaultValue="50" onChange={handleThresholdChange} />
-                    <span id="thresholdValue">50</span>
+                    <input type="range" id="threshold" min="0" max="100" defaultValue="0" onChange={handleThresholdChange} />
+                    <span id="thresholdValue">0</span>
                 </fieldset>
             </div>
             <div className="setting">

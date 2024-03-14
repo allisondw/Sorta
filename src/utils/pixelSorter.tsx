@@ -1,4 +1,5 @@
 enum ColorChannel {
+    None = "none",
     Red = 'red',
     Green = 'green',
     Blue = 'blue'
@@ -26,17 +27,17 @@ export const sortPixels = (
           }
   
           rowPixels.sort((a, b) => {
-            if (colorChannel) {
-              let valueA = getValueByColorChannel(a as Pixel, colorChannel as ColorChannel);
-              let valueB = getValueByColorChannel(b as Pixel, colorChannel as ColorChannel);
-              if (valueA > sortingThreshold && valueB > sortingThreshold) {
-                return valueA - valueB;
-              }
-            } else {
+            if (colorChannel === ColorChannel.None || !colorChannel) {
               let brightnessA = calculateBrightness(a as Pixel);
               let brightnessB = calculateBrightness(b as Pixel);
               if (brightnessA > sortingThreshold && brightnessB > sortingThreshold) {
                 return compareBrightness(a as Pixel, b as Pixel);
+              }
+            } else {
+              let valueA = getValueByColorChannel(a as Pixel, colorChannel as ColorChannel);
+              let valueB = getValueByColorChannel(b as Pixel, colorChannel as ColorChannel);
+              if (valueA > sortingThreshold && valueB > sortingThreshold) {
+                return valueA - valueB;
               }
             }
             return 0;
@@ -61,23 +62,22 @@ export const sortPixels = (
   
     
           colPixels.sort((a, b) => {
-            if (colorChannel) {
-  
-              let valueA = getValueByColorChannel(a as Pixel, colorChannel as ColorChannel);
-              let valueB = getValueByColorChannel(b as Pixel, colorChannel as ColorChannel);
-              if (valueA > sortingThreshold && valueB > sortingThreshold) {
-                return valueA - valueB;
-              }
-            } else {
-  
+            if (colorChannel === ColorChannel.None || !colorChannel) {
               let brightnessA = calculateBrightness(a as Pixel);
               let brightnessB = calculateBrightness(b as Pixel);
               if (brightnessA > sortingThreshold && brightnessB > sortingThreshold) {
                 return compareBrightness(a as Pixel, b as Pixel);
               }
+            } else {
+              let valueA = getValueByColorChannel(a as Pixel, colorChannel as ColorChannel);
+              let valueB = getValueByColorChannel(b as Pixel, colorChannel as ColorChannel);
+              if (valueA > sortingThreshold && valueB > sortingThreshold) {
+                return valueA - valueB;
+              }
             }
             return 0;
           });
+  
   
           for (let i = colStart, j = 0; i < pixels.length; i += rowLength, j++) {
             pixels[i] = colPixels[j][0];
@@ -90,11 +90,12 @@ export const sortPixels = (
 };
 
 export const getValueByColorChannel = (pixel: Pixel, channel: ColorChannel): number => {
-    const channelMap = { 
-        [ColorChannel.Red]: 0, 
-        [ColorChannel.Green]: 1, 
-        [ColorChannel.Blue]: 2 };
-    return pixel[channelMap[channel]];
+  const channelMap: {[key: string]: number } = { 
+      [ColorChannel.Red]: 0, 
+      [ColorChannel.Green]: 1, 
+      [ColorChannel.Blue]: 2
+    };
+  return pixel[channelMap[channel]];
 };
 
 export const calculateBrightness = (pixel: Pixel) => {
