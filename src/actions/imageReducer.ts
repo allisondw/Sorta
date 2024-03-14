@@ -1,26 +1,36 @@
-import { ImageActionTypes, SET_IMAGE_DATA, SetImageDataAction } from "./imageActions";
+import { SET_THRESHOLD, SET_COLOR_CHANNEL, SET_DIRECTION, ColorChannel } from "./imageActions";
+import { ImageAction } from "./imageActions";
 import { Action } from 'redux';
 
-interface ImageState {
-    imageData: ImageData | null;
-}
-
-const initialState: ImageState = {
-    imageData: null,
+const initialState = {
+    threshold: 50,
+    colorChannel: ColorChannel.None,
+    direction: 'horizontal',
 };
 
-const imageReducer = (state: ImageState = initialState, action: Action | ImageActionTypes): ImageState => {
-    if (isSetImageDataAction(action)) {
-        return {
-            ...state,
-            imageData: action.payload.imageData,
-        }
+export const imageReducer = (
+    state = initialState, 
+    action: Action | ImageAction 
+) => {
+    switch (action.type) {
+        case SET_THRESHOLD:
+            if ('payload' in action) {
+                return { ...state, threshold: action.payload };
+            }
+            break;
+        case SET_COLOR_CHANNEL:
+            if ('payload' in action) {
+                return { ...state, colorChannel: action.payload };
+            }
+            break;
+        case SET_DIRECTION:
+            if ('payload' in action) {
+                return { ...state, direction: action.payload };
+            }
+            break;
+        default:
+            return state;
     }
-    return state;
 };
-
-function isSetImageDataAction(action: Action | ImageActionTypes): action is SetImageDataAction {
-    return (action as ImageActionTypes).type === SET_IMAGE_DATA;
-}
 
 export default imageReducer;

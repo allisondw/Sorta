@@ -1,10 +1,13 @@
 import React from 'react';
 import "./MainPage.scss";
-import { sortPixelsSimple } from '../utils/pixelSorter';
-import { useDispatch } from 'react-redux';
-import { setImageData } from '../actions/imageActions';
+import { sortPixels } from '../utils/pixelSorter';
+import { useDispatch, useSelector } from 'react-redux';
+import { setThreshold, setColorChannel, setDirection, Threshold, ColorChannel, Direction } from '../actions/imageActions';
+import SettingsPanel from './SettingsPanel/SettingsPanel';
 
 const MainPage: React.FC = () => {
+    const dispatch = useDispatch();
+    const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
     const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -13,8 +16,9 @@ const MainPage: React.FC = () => {
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
-                    const canvas = document.getElementById('imageCanvas') as HTMLCanvasElement;
-                    const ctx = canvas.getContext('2d');
+                    const canvas = canvasRef.current;
+                    if(!canvas) return;
+                    const ctx = canvas?.getContext('2d');
                     
                     const viewportWidth = window.innerWidth;
                     const viewportHeight = window.innerHeight;
@@ -36,15 +40,33 @@ const MainPage: React.FC = () => {
             reader.readAsDataURL(file);
         }
     };
-    const handleGlitch = () => {
-        const canvas = document.getElementById('imageCanvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const applySort = () => {
+        const canvas = canvasRef.current;
+        if(!canvas) return;
+        const ctx = canvas?.getContext('2d', { willReadFrequently: true });
         if (ctx) {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            sortPixelsSimple(imageData.data, canvas.width);
+            sortPixels(imageData.data, canvas.width);
             ctx.putImageData(imageData, 0, 0);
         }
     };
+
+    const handleThresholdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newThreshold = Number(event.target.value);
+        dispatch(setThreshold(newThreshold));
+        applySort();
+    }
+    const handleColorChannelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newColorChannel = event.target.value as ColorChannel;
+        dispatch(setColorChannel(newColorChannel));
+        applySort();
+    }
+    const handleDirectionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newDirection = event.target.value as Direction;
+        dispatch(setDirection(newDirection));
+        applySort();
+    }
+
     const handleSave = () => {
         const formatSelector = document.getElementById('imageFormatSelector') as HTMLSelectElement;
         const selectedFormat = formatSelector.value;
@@ -63,14 +85,21 @@ const MainPage: React.FC = () => {
     return (
         <div className='main-container'>
             <h1>Sorta</h1>
-            <canvas id='imageCanvas'></canvas>
-            <input type='file' onChange={handleUpload} />
-            <button onClick={handleGlitch}>Glitch</button>
-            <button onClick={handleSave}>Save Image as ...</button>
-            <select id='imageFormatSelector'>
-                <option value='image/jpeg'>JPEG</option>
-                <option value='image/png'>PNG</option>
-            </select>
+            <canvas ref={canvasRef} id='imageCanvas'></canvas>
+            <SettingsPanel 
+                handleThresholdChange={handleThresholdChange}
+                handleColorChannelChange={handleColorChannelChange}
+                handleDirectionChange={handleDirectionChange}
+            />
+            <div className='basic-settings'>
+                <input type='file' onChange={handleUpload} />
+                {/* <button onClick={handleGlitch}>Glitch</button> */}
+                <button onClick={handleSave}>Save Image as ...</button>
+                <select id='imageFormatSelector'>
+                    <option value='image/jpeg'>JPEG</option>
+                    <option value='image/png'>PNG</option>
+                </select>
+            </div>
         </div>
     );
 };

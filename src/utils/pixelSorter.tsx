@@ -1,22 +1,107 @@
-export const sortPixelsSimple = (pixels: Uint8ClampedArray, imageDataWidth: number) => {
+enum ColorChannel {
+    Red = 'red',
+    Green = 'green',
+    Blue = 'blue'
+}
+
+type Pixel = [number, number, number, number];
+type Direction = 'horizontal' | 'vertical';
+
+export const sortPixels = (
+    pixels: Uint8ClampedArray, 
+    imageDataWidth: number,
+    sortingThreshold: number = 100,
+    colorChannel?: ColorChannel,
+    direction: Direction = 'horizontal',
+    ): void => {
+
     const rowLength = imageDataWidth * 4;
-    for (let rowStart = 0; rowStart < pixels.length; rowStart += rowLength) {
-        let rowEnd = rowStart + rowLength;
-        let rowPixels: number[][] = [];
-        for (let i = rowStart; i < rowEnd; i += 4) {
+    if (direction === 'horizontal') {
+        for (let rowStart = 0; rowStart < pixels.length; rowStart += rowLength) {
+          let rowEnd = rowStart + rowLength;
+          let rowPixels = [];
+  
+          for (let i = rowStart; i < rowEnd; i += 4) {
             rowPixels.push([pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]]);
-        }
-        rowPixels.sort((a, b) => compareBrightness(a, b));
-        for (let i = rowStart, j = 0; i < rowEnd; i += 4, j++) {
-            pixels[i] = rowPixels[j][0];
-            pixels[i + 1] = rowPixels[j][1];
-            pixels[i + 2] = rowPixels[j][2];
-            pixels[i + 3] = rowPixels[j][3];
+          }
+  
+          rowPixels.sort((a, b) => {
+            if (colorChannel) {
+              let valueA = getValueByColorChannel(a as Pixel, colorChannel as ColorChannel);
+              let valueB = getValueByColorChannel(b as Pixel, colorChannel as ColorChannel);
+              if (valueA > sortingThreshold && valueB > sortingThreshold) {
+                return valueA - valueB;
+              }
+            } else {
+              let brightnessA = calculateBrightness(a as Pixel);
+              let brightnessB = calculateBrightness(b as Pixel);
+              if (brightnessA > sortingThreshold && brightnessB > sortingThreshold) {
+                return compareBrightness(a as Pixel, b as Pixel);
+              }
+            }
+            return 0;
+          });
+  
+  
+            for (let i = rowStart, j = 0; i < rowEnd; i += 4, j++) {
+                pixels[i] = rowPixels[j][0];
+                pixels[i + 1] = rowPixels[j][1];
+                pixels[i + 2] = rowPixels[j][2];
+                pixels[i + 3] = rowPixels[j][3];
+                }
+            }
+        } else if (direction === 'vertical') {
+        for (let colStart = 0; colStart < rowLength; colStart += 4) {
+          let colPixels = [];
+  
+  
+          for (let i = colStart; i < pixels.length; i += rowLength) {
+            colPixels.push([pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]]);
+          }
+  
+    
+          colPixels.sort((a, b) => {
+            if (colorChannel) {
+  
+              let valueA = getValueByColorChannel(a as Pixel, colorChannel as ColorChannel);
+              let valueB = getValueByColorChannel(b as Pixel, colorChannel as ColorChannel);
+              if (valueA > sortingThreshold && valueB > sortingThreshold) {
+                return valueA - valueB;
+              }
+            } else {
+  
+              let brightnessA = calculateBrightness(a as Pixel);
+              let brightnessB = calculateBrightness(b as Pixel);
+              if (brightnessA > sortingThreshold && brightnessB > sortingThreshold) {
+                return compareBrightness(a as Pixel, b as Pixel);
+              }
+            }
+            return 0;
+          });
+  
+          for (let i = colStart, j = 0; i < pixels.length; i += rowLength, j++) {
+            pixels[i] = colPixels[j][0];
+            pixels[i + 1] = colPixels[j][1];
+            pixels[i + 2] = colPixels[j][2];
+            pixels[i + 3] = colPixels[j][3];
+          }
         }
     }
 };
 
-export const compareBrightness = (a: number[], b: number[]): number => {
+export const getValueByColorChannel = (pixel: Pixel, channel: ColorChannel): number => {
+    const channelMap = { 
+        [ColorChannel.Red]: 0, 
+        [ColorChannel.Green]: 1, 
+        [ColorChannel.Blue]: 2 };
+    return pixel[channelMap[channel]];
+};
+
+export const calculateBrightness = (pixel: Pixel) => {
+    return 0.299 * pixel[0] + 0.587 * pixel[1] + 0.114 * pixel[2];
+};
+
+export const compareBrightness = (a: Pixel, b: Pixel): number => {
     let brightnessA = 0.299 * Number(a[0]) + 0.587 * Number(a[1]) + 0.114 * Number(a[2]);
     let brightnessB = 0.299 * Number(b[0]) + 0.586 * Number(b[1]) + 0.114 * Number(b[2]);
     return brightnessA - brightnessB;
