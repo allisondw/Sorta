@@ -2,14 +2,14 @@ import React from 'react';
 import "./MainPage.scss";
 import { sortPixels } from '../utils/pixelSorter';
 import { useDispatch, useSelector } from 'react-redux';
-import { setThreshold, setColorChannel, setDirection, Threshold, ColorChannel, Direction } from '../actions/imageActions';
+import { setThreshold, setColorChannel, setDirection, setOriginalImageData, Threshold, ColorChannel, Direction } from '../actions/imageActions';
 import SettingsPanel from './SettingsPanel/SettingsPanel';
 import { RootState } from '../app/store';
 
 const MainPage: React.FC = () => {
     const dispatch = useDispatch();
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
-    const [originalImageData, setOriginalImageData] = React.useState<ImageData | null>(null);
+    // const [originalImageData, setOriginalImageData] = React.useState<ImageData | null>(null);
 
     const currentThreshold = useSelector((state: RootState) => state.image?.threshold ?? 50);
     const currentColorChannel = useSelector((state: RootState) => state.image?.colorChannel ?? ColorChannel.None);
@@ -26,7 +26,7 @@ const MainPage: React.FC = () => {
                     if(!canvas) return;
                     const ctx = canvas?.getContext('2d');
                     const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height) as ImageData;
-                    setOriginalImageData(imageData);
+                    dispatch(setOriginalImageData(imageData));
                     
                     const viewportWidth = window.innerWidth;
                     const viewportHeight = window.innerHeight;
@@ -50,18 +50,15 @@ const MainPage: React.FC = () => {
     };
     const applySort = () => {
         const canvas = canvasRef.current;
-        if(!canvas || !originalImageData) return;
+        if(!canvas) return;
         const ctx = canvas?.getContext('2d', { willReadFrequently: true });
-        
-        let imageDataCopy = new ImageData(
-            new Uint8ClampedArray(originalImageData.data),
-            originalImageData.width,
-            originalImageData.height
-        );
-        sortPixels(imageDataCopy.data, canvas.width, currentThreshold, currentColorChannel, currentDirection);
-        ctx?.putImageData(imageDataCopy, 0, 0);
-        
+        if (ctx) {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            sortPixels(imageData.data, canvas.width, currentThreshold, currentColorChannel, currentDirection);
+            ctx.putImageData(imageData, 0, 0);
+        }
     };
+    
 
     const handleThresholdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newThreshold = Number(event.target.value);
