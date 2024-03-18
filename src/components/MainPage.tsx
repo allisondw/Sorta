@@ -9,7 +9,7 @@ import { RootState } from '../app/store';
 const MainPage: React.FC = () => {
     const dispatch = useDispatch();
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
-    // const [originalImageData, setOriginalImageData] = React.useState<ImageData | null>(null);
+    const [originalImageData, setOriginalImageData] = React.useState<ImageData | null>(null);
 
     const currentThreshold = useSelector((state: RootState) => state.image?.threshold ?? 50);
     const currentColorChannel = useSelector((state: RootState) => state.image?.colorChannel ?? ColorChannel.None);
