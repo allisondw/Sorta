@@ -9,21 +9,22 @@ type Pixel = [number, number, number, number];
 type Direction = 'horizontal' | 'vertical';
 
 export const sortPixels = (
-    pixels: Uint8ClampedArray, 
+    pixels: ImageData, 
     imageDataWidth: number,
-    sortingThreshold: number = 100,
-    colorChannel?: ColorChannel,
+    sortingThreshold: number = 0,
+    colorChannel?: ColorChannel | undefined,
     direction: Direction = 'horizontal',
     ): void => {
 
     const rowLength = imageDataWidth * 4;
     if (direction === 'horizontal') {
-        for (let rowStart = 0; rowStart < pixels.length; rowStart += rowLength) {
+
+        for (let rowStart = 0; rowStart < pixels.data.length; rowStart += rowLength) {
           let rowEnd = rowStart + rowLength;
-          let rowPixels = [];
+          let rowPixels: Pixel[] = [];
   
           for (let i = rowStart; i < rowEnd; i += 4) {
-            rowPixels.push([pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]]);
+            rowPixels.push([pixels.data[i], pixels.data[i + 1], pixels.data[i + 2], pixels.data[i + 3]]);
           }
   
           rowPixels.sort((a, b) => {
@@ -45,19 +46,19 @@ export const sortPixels = (
   
   
             for (let i = rowStart, j = 0; i < rowEnd; i += 4, j++) {
-                pixels[i] = rowPixels[j][0];
-                pixels[i + 1] = rowPixels[j][1];
-                pixels[i + 2] = rowPixels[j][2];
-                pixels[i + 3] = rowPixels[j][3];
+                pixels.data[i] = rowPixels[j][0];
+                pixels.data[i + 1] = rowPixels[j][1];
+                pixels.data[i + 2] = rowPixels[j][2];
+                pixels.data[i + 3] = rowPixels[j][3];
                 }
             }
         } else if (direction === 'vertical') {
         for (let colStart = 0; colStart < rowLength; colStart += 4) {
-          let colPixels = [];
+          let colPixels: Pixel[] = [];
   
   
-          for (let i = colStart; i < pixels.length; i += rowLength) {
-            colPixels.push([pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]]);
+          for (let i = colStart; i < pixels.data.length; i += rowLength) {
+            colPixels.push([pixels.data[i], pixels.data[i + 1], pixels.data[i + 2], pixels.data[i + 3]]);
           }
   
     
@@ -79,11 +80,11 @@ export const sortPixels = (
           });
   
   
-          for (let i = colStart, j = 0; i < pixels.length; i += rowLength, j++) {
-            pixels[i] = colPixels[j][0];
-            pixels[i + 1] = colPixels[j][1];
-            pixels[i + 2] = colPixels[j][2];
-            pixels[i + 3] = colPixels[j][3];
+          for (let i = colStart, j = 0; i < pixels.data.length; i += rowLength, j++) {
+            pixels.data[i] = colPixels[j][0];
+            pixels.data[i + 1] = colPixels[j][1];
+            pixels.data[i + 2] = colPixels[j][2];
+            pixels.data[i + 3] = colPixels[j][3];
           }
         }
     }

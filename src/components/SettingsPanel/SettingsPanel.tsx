@@ -1,20 +1,23 @@
+import React from "react";
 import "./SettingsPanel.scss";
 
 interface SettingsPanelProps {
-    handleThresholdChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleSliderChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleColorChannelChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     handleDirectionChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    threshold: number;
 }
 
-const SettingsPanel: React.FC<SettingsPanelProps> = ({ handleThresholdChange, handleColorChannelChange, handleDirectionChange }) => {
+const SettingsPanel: React.FC<SettingsPanelProps> = ({ threshold, handleColorChannelChange, handleDirectionChange, handleSliderChange }) => {
+    
     return (
         <div className="settings-panel">
             <div className="setting">
                 <fieldset>
                         <legend>Threshold: </legend>
                     <label htmlFor="threshold">Threshold:</label>
-                    <input type="range" id="threshold" min="0" max="100" defaultValue="0" onChange={handleThresholdChange} />
-                    <span id="thresholdValue">0</span>
+                    <input type="range" id="threshold" min="0" max="255" value={255 - threshold} onChange={handleSliderChange} />
+                    <span id="thresholdValue">{255 - threshold}</span>
                 </fieldset>
             </div>
             <div className="setting">
