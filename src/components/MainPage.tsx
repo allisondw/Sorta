@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import "./MainPage.scss";
 import { sortPixels } from "../utils/pixelSorter"
 import { ColorChannel, Direction } from '../actions/imageActions';
@@ -87,21 +87,18 @@ const MainPage: React.FC = () => {
     return (
         <div className='main-container'>
             <h1>Sorta</h1>
-            <canvas ref={canvasRef} id='imageCanvas'></canvas>
-            <SettingsPanel 
-                threshold = {threshold}
-                handleSliderChange={handleSliderChange}
-                handleColorChannelChange={handleColorChannelChange}
-                handleDirectionChange={handleDirectionChange}
-            />
-            <div className='basic-settings'>
-                <input type='file' onChange={handleUpload} />
-                <button onClick={handleSave}>Save Image as ...</button>
-                <select id='imageFormatSelector'>
-                    <option value='image/jpeg'>JPEG</option>
-                    <option value='image/png'>PNG</option>
-                </select>
-            </div>
+            <section className='canvas-area'>
+                <canvas ref={canvasRef} id='imageCanvas'></canvas>
+                <SettingsPanel 
+                    threshold = {threshold}
+                    handleSliderChange={handleSliderChange}
+                    handleColorChannelChange={handleColorChannelChange}
+                    handleDirectionChange={handleDirectionChange}
+                    handleUpload={handleUpload}
+                    handleSave={handleSave}
+                />
+            </section>
+            
         </div>
     );
 };
