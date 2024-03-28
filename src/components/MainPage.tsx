@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./MainPage.scss";
-import { sortPixelsSimple } from '../utils/pixelSorter';
-import { useDispatch } from 'react-redux';
-import { setImageData } from '../actions/imageActions';
+import { sortPixels } from "../utils/pixelSorter"
+import { ColorChannel, Direction } from '../actions/imageActions';
+import SettingsPanel from './SettingsPanel/SettingsPanel';
+
 
 const MainPage: React.FC = () => {
+    const canvasRef = React.useRef<HTMLCanvasElement>(null);
+    const [originalImageData, setOriginalImageData] = useState<ImageData | null>(null);
+    const [threshold, setThreshold] = useState(255);
+    const [colorChannel, setColorChannel] = useState<ColorChannel | undefined>(ColorChannel.None)
+    const [direction, setDirection] = useState<'horizontal' | 'vertical'>('horizontal');
 
     const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -13,38 +19,56 @@ const MainPage: React.FC = () => {
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
-                    const canvas = document.getElementById('imageCanvas') as HTMLCanvasElement;
-                    const ctx = canvas.getContext('2d');
+                    const canvas = canvasRef.current;
+                    if (!canvas) return;
+                    const ctx = canvas?.getContext('2d');
                     
-                    const viewportWidth = window.innerWidth;
-                    const viewportHeight = window.innerHeight;
-
-                    const maxWidth = viewportWidth * 0.5;
-                    const maxHeight = viewportHeight * 0.5;
-
-                    const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
-
-                    const scaledWidth = img.width * scale;
-                    const scaledHeight = img.height * scale;
-
-                    canvas.width = scaledWidth;
-                    canvas.height = scaledHeight;
-                    ctx?.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+    
+                    ctx?.drawImage(img, 0, 0, img.width, img.height);
+                    const imageData = ctx?.getImageData(0, 0, img.width, img.height);
+                    if (imageData) {
+                        setOriginalImageData(imageData);
+                    }
                 };
                 img.src = e.target?.result as string;
             };
             reader.readAsDataURL(file);
         }
     };
-    const handleGlitch = () => {
-        const canvas = document.getElementById('imageCanvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        if (ctx) {
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            sortPixelsSimple(imageData.data, canvas.width);
-            ctx.putImageData(imageData, 0, 0);
+
+    const applySort = () => {
+        const canvas = canvasRef.current;
+        if(!canvas) return;
+        const ctx = canvas?.getContext('2d', { willReadFrequently: true });
+        if (ctx && originalImageData) {
+            const imageDataCopy = new Uint8ClampedArray(originalImageData.data);
+            const copiedImageData = new ImageData(imageDataCopy, originalImageData.width, originalImageData.height)
+            if(copiedImageData) {
+                sortPixels(copiedImageData, canvas.width, threshold, colorChannel, direction);
+                ctx.putImageData(copiedImageData, 0, 0);
+            }
         }
     };
+
+    const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = 255 - Number(event.target.value);
+        setThreshold(newValue);
+        applySort();
+    };
+    
+    const handleColorChannelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newColorChannel = event.target.value as ColorChannel;
+        setColorChannel(newColorChannel);
+        applySort();
+    }
+    const handleDirectionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newDirection = event.target.value as Direction;
+        setDirection(newDirection);
+        applySort();
+    }
+
     const handleSave = () => {
         const formatSelector = document.getElementById('imageFormatSelector') as HTMLSelectElement;
         const selectedFormat = formatSelector.value;
@@ -63,14 +87,18 @@ const MainPage: React.FC = () => {
     return (
         <div className='main-container'>
             <h1>Sorta</h1>
-            <canvas id='imageCanvas'></canvas>
-            <input type='file' onChange={handleUpload} />
-            <button onClick={handleGlitch}>Glitch</button>
-            <button onClick={handleSave}>Save Image as ...</button>
-            <select id='imageFormatSelector'>
-                <option value='image/jpeg'>JPEG</option>
-                <option value='image/png'>PNG</option>
-            </select>
+            <section className='canvas-area'>
+                <canvas ref={canvasRef} id='imageCanvas'></canvas>
+                <SettingsPanel 
+                    threshold = {threshold}
+                    handleSliderChange={handleSliderChange}
+                    handleColorChannelChange={handleColorChannelChange}
+                    handleDirectionChange={handleDirectionChange}
+                    handleUpload={handleUpload}
+                    handleSave={handleSave}
+                />
+            </section>
+            
         </div>
     );
 };

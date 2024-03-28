@@ -3,4 +3,23 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
+
+#imageCanvas {
+    border-radius: 10px;
+    position: fixed;
+    left: 200px;
+}
+
+.canvas-area {
+    display: flex;
+    justify-content: space-between;
+}
+
+button, select, input {
+    background-color: #428CE2;
+    color: white;
+    font-weight: bold;
+}
+

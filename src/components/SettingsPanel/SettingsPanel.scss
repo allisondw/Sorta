@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+.settings-panel {
+    display: flex;
+    flex-direction: column;
+    margin: 2rem;
+    position: fixed;
+    right: 20px;
+    color: white;
+    // background-color: #1C1E24;
+    background-color: rgba(28, 30, 36, 0.5);
+    border: 1px solid #272a31;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.setting {
+    // height: 100%;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.upload {
+    border-bottom: 1px solid #272a31;
+}
+
+
+.btn {
+
+    &__threshold{
+        margin-top: 1rem;        
+    }
+
+    &__color-channel {
+        margin-top: 1rem;
+        border-radius: 5px;
+        border: none;
+        height: 40px;
+        width: 150px;
+    }
+
+    &__direction {
+        
+        margin-right: 2rem;
+
+        &--horizontal {
+            
+        }
+        &--vertical {
+            // 
+        }
+    }
+
+    &__upload {
+        background: none;
+        margin: 0 1rem;
+        font-weight: bold;
+    }
+
+    &__save {
+        margin-right: 1rem;
+        border-radius: 5px;
+        border: none;
+        height: 40px;
+        width: 150px;
+    }
+
+    &__format-selector {
+        border-radius: 5px;
+        border: none;
+        height: 40px;
+        width: 100px;
+        text-align: center;
+    }
+
+}
+
+.label__horizontal {
+    margin-right: 1rem;
+}
+
+
+::-webkit-file-upload-button {
+
+    background-color: #428CE2;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    border: none;
+    height: 40px;
+    width: 100px;
+    text-align: center;
+    margin-right: 1rem;
+}
