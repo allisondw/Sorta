@@ -35,6 +35,9 @@ const MainPage: React.FC = () => {
                 img.src = e.target?.result as string;
             };
             reader.readAsDataURL(file);
+            setThreshold(255);
+            setColorChannel(ColorChannel.None);
+            setDirection('horizontal');
         }
     };
 
