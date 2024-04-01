@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap");
 
 .settings-panel {
     display: flex;
@@ -9,16 +9,14 @@
     color: white;
     // background-color: #1C1E24;
     background-color: rgba(28, 30, 36, 0.5);
-    border: 1px solid #272a31;
     border-radius: 10px;
-    font-family: Arial, sans-serif;
+    font-family: 'Inconsolata', Arial, sans-serif;
     font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 0.5px;
+    font-weight: 500;
+    max-height: 525px;
 }
 
 .setting {
-    // height: 100%;
     padding: 1rem;
     margin-bottom: 2rem;
 }
@@ -31,7 +29,8 @@
 .btn {
 
     &__threshold{
-        margin-top: 1rem;        
+        margin-top: 1rem;   
+        width: 85%;     
     }
 
     &__color-channel {
@@ -40,24 +39,19 @@
         border: none;
         height: 40px;
         width: 150px;
+        font-family: "Inconsolata";
+        padding-left: 12px;
     }
 
     &__direction {
-        
         margin-right: 2rem;
 
-        &--horizontal {
-            
-        }
-        &--vertical {
-            // 
-        }
     }
 
     &__upload {
         background: none;
-        margin: 0 1rem;
-        font-weight: bold;
+        margin: 0 1rem 0 0;
+        font-family: 'Inconsolata';
     }
 
     &__save {
@@ -66,9 +60,11 @@
         border: none;
         height: 40px;
         width: 150px;
+        font-family: "Inconsolata";
     }
 
     &__format-selector {
+        font-family: "Inconsolata";
         border-radius: 5px;
         border: none;
         height: 40px;
@@ -77,6 +73,9 @@
     }
 
 }
+.save {
+    margin-bottom: 0;
+}
 
 .label__horizontal {
     margin-right: 1rem;
@@ -84,10 +83,10 @@
 
 
 ::-webkit-file-upload-button {
-
+    font-family: 'Inconsolata';
     background-color: #428CE2;
     color: white;
-    font-weight: bold;
+    font-weight: 600;
     border-radius: 5px;
     border: none;
     height: 40px;
@@ -95,3 +94,4 @@
     text-align: center;
     margin-right: 1rem;
 }
+

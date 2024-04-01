@@ -1,7 +1,7 @@
 .main-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    // align-items: center;
     justify-content: center;
     position: relative;
 }
@@ -9,7 +9,9 @@
 #imageCanvas {
     border-radius: 10px;
     position: fixed;
-    left: 200px;
+    left: 50px;
+    max-height: 75vh;
+    max-width: 85vw;
 }
 
 .canvas-area {
