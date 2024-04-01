@@ -3,7 +3,7 @@ import "./MainPage.scss";
 import { sortPixels } from "../utils/pixelSorter"
 import { ColorChannel, Direction } from '../actions/imageActions';
 import SettingsPanel from './SettingsPanel/SettingsPanel';
-
+import Header from './Header/Header';
 
 const MainPage: React.FC = () => {
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -86,9 +86,9 @@ const MainPage: React.FC = () => {
 
     return (
         <div className='main-container'>
-            <h1>Sorta</h1>
+            <Header />
             <section className='canvas-area'>
-                <canvas ref={canvasRef} id='imageCanvas'></canvas>
+                <canvas ref={canvasRef} id='imageCanvas' className="canvas"></canvas>
                 <SettingsPanel 
                     threshold = {threshold}
                     handleSliderChange={handleSliderChange}
