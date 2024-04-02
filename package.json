@@ -22,8 +22,6 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "heroku-prebuild": "npm install --legacy-peer-deps",
-    "heroku-postbuild": "npm install --force --legacy-peer-deps",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -47,10 +45,11 @@
       "last 1 safari version"
     ]
   },
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
+  },
   "devDependencies": {
     "typescript": "^4.9.5"
-  },
-  "engines": {
-    "node": "20.x"
   }
 }
