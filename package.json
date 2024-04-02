@@ -23,6 +23,7 @@
   },
   "scripts": {
     "heroku-prebuild": "npm install --legacy-peer-deps",
+    "heroku-postbuild": "npm install --force --legacy-peer-deps",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -47,7 +48,7 @@
     ]
   },
   "devDependencies": {
-    "typescript": "^4"
+    "typescript": "^4.9.5"
   },
   "engines": {
     "node": "16.x",
